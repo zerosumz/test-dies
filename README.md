@@ -28,8 +28,10 @@ SIMPLE SELECT TEST
 
 [^Date]:java.util.Date
 
+> i used footnote to describe column type. not visible current readme file.
+> table caption too. 
+> <s>MARKDOWN EXAMPLE IN README.md</s>
 
-~MARKDOWN EXAMPLE IN README.md~
 
 write some configurations to spring application context;
 ```
