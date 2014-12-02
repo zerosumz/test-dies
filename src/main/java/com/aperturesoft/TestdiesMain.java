@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
@@ -102,6 +103,7 @@ public class TestdiesMain {
 	@SuppressWarnings("unchecked")
 	public static <T extends Node> T findNodeByType(Node parentNode, final Class<T> clazz) {
 		return (T) Iterables.find(parentNode.getChildren(), new Predicate<Node>() {
+			@Override
 			public boolean apply(Node node) {
 				return clazz.isAssignableFrom(node.getClass());
 			}
@@ -112,6 +114,7 @@ public class TestdiesMain {
 	@SuppressWarnings("unchecked")
 	public static <T extends Node> List<T> findAllNodeByType(Node parentNode, final Class<T> clazz) {
 		return (List<T>) ImmutableList.<Node> copyOf(Iterables.filter(parentNode.getChildren(), new Predicate<Node>() {
+			@Override
 			public boolean apply(Node node) {
 				return clazz.isAssignableFrom(node.getClass());
 			}
@@ -120,6 +123,7 @@ public class TestdiesMain {
 	
 	public static String getTextFromNode(Node node){
 		return Joiner.on("").join(Iterables.transform(findAllNodeByType(node, TextNode.class), new Function<TextNode, String>() {
+			@Override
 			public String apply(TextNode input) {
 				return StringUtils.trim(input.getText());
 			}

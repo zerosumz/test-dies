@@ -31,6 +31,7 @@ public class TestdiesConfigurer implements BeanDefinitionRegistryPostProcessor, 
 	private DataSource dataSource;
 	private DateFormat dateFormat;
 	private Map<String, List<SqlRunner>> sqlRunnersMap;
+	private Boolean donotDelete = false;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestdiesConfigurer.class);
 
@@ -121,6 +122,14 @@ public class TestdiesConfigurer implements BeanDefinitionRegistryPostProcessor, 
 
 	public void setSqlRunnersMap(Map<String, List<SqlRunner>> sqlRunnersMap) {
 		this.sqlRunnersMap = sqlRunnersMap;
+	}
+
+	public Boolean getDonotDelete() {
+		return donotDelete;
+	}
+
+	public void setDonotDelete(Boolean donotDelete) {
+		this.donotDelete = donotDelete;
 	}
 
 };

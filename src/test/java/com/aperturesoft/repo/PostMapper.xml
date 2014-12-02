@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="asdf.repo.PostMapper">
+
+	<!-- 포스트에 대한 맵핑 -->
+	<resultMap id="Post" type="asdf.model.Post">
+		<id property="id" column="ID" />
+		<result property="content" column="CONTENT"/>
+		<collection property="comments" columnPrefix="COMMENTS_" resultMap="Comment" notNullColumn="ID"/>
+	</resultMap>
+	
+	<!-- 코멘트에 대한 맵핑 -->
+	<resultMap id="Comment" type="asdf.model.Comment">
+		<id property="id" column="ID" />
+		<result property="content" column="CONTENT"/>
+	</resultMap>
+	
+	<select id="selectPostById" resultMap="Post">
+	<![CDATA[
+		SELECT POST.ID,
+		       POST.CONTENT,
+		       POST.CTIME,
+		       POST.MTIME,
+		       COMMENT.ID AS COMMENTS_ID,
+		       COMMENT.CONTENT AS COMMENTS_CONTENT,
+		       COMMENT.CTIME AS COMMENTS_CTIME,
+		       COMMENT.MTIME AS COMMENTS_MTIME
+		  FROM POST JOIN COMMENT ON POST.ID = COMMENT.POST_ID
+		 WHERE POST.ID = #{value}
+	]]>
+	</select>
+	
+</mapper>

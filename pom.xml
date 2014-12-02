@@ -6,6 +6,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>test-dies</name>
 	<description>test-dies</description>
+	
 
 	<build>
 		<resources>
@@ -22,7 +23,22 @@
 				<directory>src/test/resources</directory>
 			</testResource>
 		</testResources>
+		
+		<plugins>
+			<!-- Java Source/Target Versions -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
+	
+	
 
 	<dependencies>
 		<dependency>
@@ -110,5 +126,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
+	
 </project>

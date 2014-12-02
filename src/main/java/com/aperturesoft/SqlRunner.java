@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+
 import javax.sql.DataSource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -26,10 +28,11 @@ public class SqlRunner {
 	private String sql;
 	private List<List<Cell>> bodyRows = new ArrayList<List<Cell>>();
 	private DateFormat dateFormat;
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(SqlRunner.class);
 
-	public SqlRunner(DataSource dataSource, String tableName, List<Cell> headerRow, List<List<Cell>> bodyRows, DateFormat dateFormat) {
+	public SqlRunner(DataSource dataSource, String tableName, List<Cell> headerRow, List<List<Cell>> bodyRows,
+			DateFormat dateFormat) {
 		super();
 		this.dataSource = dataSource;
 		this.tableName = tableName;
@@ -41,6 +44,7 @@ public class SqlRunner {
 
 		sql = "INSERT INTO " + tableName + " ( "
 				+ Joiner.on(" , ").join(Iterables.transform(headerRow, new Function<Cell, String>() {
+					@Override
 					public String apply(Cell cell) {
 						return cell.name;
 					}
@@ -52,16 +56,18 @@ public class SqlRunner {
 		PreparedStatement preparedStatement = null;
 		try {
 			connection = dataSource.getConnection();
+			preparedStatement = connection.prepareStatement(sql);
 			for (List<Cell> row : bodyRows) {
-				preparedStatement = connection.prepareStatement(sql);
-				
+
 				for (int i = 0; i < row.size(); i++) {
 					Cell cell = row.get(i);
 					int paramIndex = i + 1;
-					
+
 					Class<?> clazz = cell.clazz;
 					String value = cell.value;
-					if (clazz.equals(Integer.class))
+					if(StringUtils.isEmpty(value))
+						preparedStatement.setObject(paramIndex, null);
+					else if (clazz.equals(Integer.class))
 						preparedStatement.setInt(paramIndex, Integer.parseInt(value));
 					else if (clazz.equals(Long.class))
 						preparedStatement.setLong(paramIndex, Long.parseLong(value));
@@ -69,7 +75,7 @@ public class SqlRunner {
 						preparedStatement.setDouble(paramIndex, Double.parseDouble(value));
 					else if (clazz.equals(Float.class))
 						preparedStatement.setFloat(paramIndex, Float.parseFloat(value));
-					else if (clazz.equals(Date.class)) 
+					else if (clazz.equals(Date.class))
 						preparedStatement.setDate(paramIndex, new java.sql.Date(dateFormat.parse(value).getTime()));
 					else if (clazz.equals(Boolean.class))
 						preparedStatement.setBoolean(paramIndex, Boolean.parseBoolean(value));
@@ -81,7 +87,9 @@ public class SqlRunner {
 				preparedStatement.addBatch();
 			}
 			LOGGER.debug("now filling \'" + tableName + "\' table ...");
+			
 			preparedStatement.executeBatch();
+			connection.commit();
 		} catch (SQLException e) {
 			try {
 				e.printStackTrace();
@@ -135,4 +143,5 @@ public class SqlRunner {
 
 		}
 	}
+
 }
