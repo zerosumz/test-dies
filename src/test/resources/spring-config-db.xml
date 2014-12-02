@@ -48,7 +48,7 @@
 	<!-- 마이바티스가 맵퍼 인터페이스와 맵퍼 인터페이스에 해당하는 쿼리 xml을 wiring 할 수 있도록 패키지 위치를 지정한다. -->
 	<!-- 가독성 및 편의를 위해 현재 인터페이스와 xml의 패키지위치가 같다. -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="asdf.repo" />
+		<property name="basePackage" value="com.aperturesoft.repo" />
 	</bean>
 
 

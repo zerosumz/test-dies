@@ -99,4 +99,10 @@ public class TestPostMapperTest {
 }
 ````
 
+NOTE
+----
+
+* when first test, H2 database set schema option not working.. 
+    * first run without set option
+    * and run with set option.. then error go away. 
 
