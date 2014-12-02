@@ -42,6 +42,7 @@ SELECT POST TEST
 [^int]:java.lang.Integer
 
 [^String]:java.lang.String
+
 </pre>
 
 > i used footnote to describe column type. not visible github favor..
