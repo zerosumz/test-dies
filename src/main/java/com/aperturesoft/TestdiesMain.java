@@ -91,11 +91,14 @@ public class TestdiesMain {
 					rows.add(columns);
 					
 				}
+				LOGGER.debug(title + " -> " +  tableName + " found. ");
 				sqlRunners.add(new SqlRunner(dataSource, tableName, headerRow, rows, dateFormatter));
 			}
 			
 			sqlRunnerMap.put(title, sqlRunners);
 			LOGGER.info("with \'" + title + "\' test, " + tables.size() + " tables will fix.");
+
+
 		}
 		return sqlRunnerMap;
 	}
