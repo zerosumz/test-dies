@@ -2,12 +2,14 @@ package com.aperturesoft;
 
 import java.io.IOException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -24,112 +26,115 @@ import org.springframework.core.io.Resource;
 import static org.springframework.util.Assert.*;
 
 public class TestdiesConfigurer implements BeanDefinitionRegistryPostProcessor, InitializingBean,
-		ApplicationContextAware, BeanNameAware {
-	private ApplicationContext applicationContext;
-	private String beanName;
-	private Resource[] mdownFiles;
-	private DataSource dataSource;
-	private DateFormat dateFormat;
-	private Map<String, List<SqlRunner>> sqlRunnersMap;
-	private Boolean donotDelete = false;
+        ApplicationContextAware, BeanNameAware {
+    private ApplicationContext applicationContext;
+    private String beanName;
+    private Resource[] mdownFiles;
+    private DataSource dataSource;
+    private String dateFormatString;
+    private Map<String, List<SqlRunner>> sqlRunnersMap;
+    private Boolean donotDelete = false;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TestdiesConfigurer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestdiesConfigurer.class);
 
-	/**
-	 * after bean factory init
-	 * 
-	 * @see org.springframework.beans.factory.config.BeanFactoryPostProcessor#postProcessBeanFactory(org.springframework.beans.factory.config.ConfigurableListableBeanFactory)
-	 */
-	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-	}
+    /**
+     * after bean factory init
+     *
+     * @see org.springframework.beans.factory.config.BeanFactoryPostProcessor#postProcessBeanFactory(org.springframework.beans.factory.config.ConfigurableListableBeanFactory)
+     */
+    public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
+    }
 
-	/**
-	 * after properties set
-	 * 
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
-	public void afterPropertiesSet() throws Exception {
-		notNull(mdownFiles, "markdown Files empty!");
-		notNull(dataSource, "datasource ref please!");
-		try {
-			if (this.dateFormat == null)
-				this.dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    /**
+     * after properties set
+     *
+     * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+     */
+    public void afterPropertiesSet() throws Exception {
+        notNull(mdownFiles, "markdown Files empty!");
+        notNull(dataSource, "datasource ref please!");
+        try {
+            if (this.dateFormatString == null) {
+                dateFormatString = "yyyy-MM-dd";
+            }
+            DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern(dateFormatString);
 
-			LOGGER.info("initializing fixture sql runner . . .");
-			this.sqlRunnersMap = TestdiesMain.createFixture(dataSource, mdownFiles, dateFormat);
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new BeanCreationException(e.getMessage());
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			throw new BeanCreationException(e.getMessage());
-		}
-	}
 
-	/**
-	 * after <b>this</b> dependency init
-	 * 
-	 * @see org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor#postProcessBeanDefinitionRegistry(org.springframework.beans.factory.support.BeanDefinitionRegistry)
-	 */
-	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
+            LOGGER.info("initializing fixture sql runner . . .");
+            this.sqlRunnersMap = TestdiesMain.createFixture(dataSource, mdownFiles, dateTimeFormatter);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new BeanCreationException(e.getMessage());
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new BeanCreationException(e.getMessage());
+        }
+    }
 
-	}
+    /**
+     * after <b>this</b> dependency init
+     *
+     * @see org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor#postProcessBeanDefinitionRegistry(org.springframework.beans.factory.support.BeanDefinitionRegistry)
+     */
+    public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
 
-	public ApplicationContext getApplicationContext() {
-		return applicationContext;
-	}
+    }
 
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
 
-	}
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
 
-	public String getBeanName() {
-		return beanName;
-	}
+    }
 
-	public void setBeanName(String beanName) {
-		this.beanName = beanName;
-	}
+    public String getBeanName() {
+        return beanName;
+    }
 
-	public Resource[] getMdownFiles() {
-		return mdownFiles;
-	}
+    public void setBeanName(String beanName) {
+        this.beanName = beanName;
+    }
 
-	public void setMdownFiles(Resource[] mdownFiles) {
-		this.mdownFiles = mdownFiles;
-	}
+    public Resource[] getMdownFiles() {
+        return mdownFiles;
+    }
 
-	public DataSource getDataSource() {
-		return dataSource;
-	}
+    public void setMdownFiles(Resource[] mdownFiles) {
+        this.mdownFiles = mdownFiles;
+    }
 
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+    public DataSource getDataSource() {
+        return dataSource;
+    }
 
-	public DateFormat getDateFormat() {
-		return dateFormat;
-	}
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
 
-	public void setDateFormat(DateFormat dateFormat) {
-		this.dateFormat = dateFormat;
-	}
+    public String getDateFormatString() {
+        return dateFormatString;
+    }
 
-	public Map<String, List<SqlRunner>> getSqlRunnersMap() {
-		return sqlRunnersMap;
-	}
+    public void setDateFormatString(String dateFormatString) {
+        this.dateFormatString = dateFormatString;
+    }
 
-	public void setSqlRunnersMap(Map<String, List<SqlRunner>> sqlRunnersMap) {
-		this.sqlRunnersMap = sqlRunnersMap;
-	}
+    public Map<String, List<SqlRunner>> getSqlRunnersMap() {
+        return sqlRunnersMap;
+    }
 
-	public Boolean getDonotDelete() {
-		return donotDelete;
-	}
+    public void setSqlRunnersMap(Map<String, List<SqlRunner>> sqlRunnersMap) {
+        this.sqlRunnersMap = sqlRunnersMap;
+    }
 
-	public void setDonotDelete(Boolean donotDelete) {
-		this.donotDelete = donotDelete;
-	}
+    public Boolean getDonotDelete() {
+        return donotDelete;
+    }
+
+    public void setDonotDelete(Boolean donotDelete) {
+        this.donotDelete = donotDelete;
+    }
 
 };

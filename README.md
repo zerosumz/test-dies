@@ -1,26 +1,25 @@
 test-dies
 ===========
 
-what is this
-------------
-test with markdown fixture.
-it is very tiny and simple project does insert fixture data to database for test.
-it use real database.
-just prepare markdown file for test. and go. 
+이건뭐지?
+-------
 
+마크다운 형식으로 작성된 픽스쳐 데이터를 가지고 테스트를 할 수 있게 하는 작은 테스트 프레임워크.
 
 usage
 -----
 
-prepare some markdown files.
+* 마크다운으로 픽스쳐를 작성하여 준비한다.
+    * 다음 예를 참고.
+    * 작성하여 프로젝트의 리소스 폴더에 위치시킨다.
 
 <pre>
 SELECT POST TEST
 ================
 
-* this is a simple test to select posts
-* post has some comments
-* so we test expected comments exists when mapper method calls. 
+* 포스트 조회기능의 간단한 테스트
+* 한 개의 포스트는 여러 개의 코멘트를 가진다.
+* 그러므로 특정 포스트를 조회하여 코멘트가 존재함을 보임.
 
 | ID[^int] |   CONTENT[^String]   |
 |----------|----------------------|
@@ -36,8 +35,8 @@ SELECT POST TEST
 [COMMENT]
 
 
-* TESTS
-    * there is 3 comments?
+* 확인할 것.
+    * `ID` 가 1인 포스트는 세 개의 코멘트를 가지고 있는가?
 
 [^int]:java.lang.Integer
 
@@ -49,7 +48,7 @@ SELECT POST TEST
 > table caption too. 
 
 
-write some configurations to spring application context;
+스프링 설정 파일은 (예를들어 xml은) 다음과 같다 
 ````xml
 <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" >
 		<property name="driverClassName" value="org.h2.Driver" />
@@ -62,24 +61,20 @@ write some configurations to spring application context;
     <jdbc:script location="classpath:/H2_CREATE.sql" />
 </jdbc:initialize-database>
 	
-<bean id="dateFormat" class="java.text.SimpleDateFormat">
-	<constructor-arg value="yyyy-MM-dd" />
-</bean>
-
 <bean id="testDies" class="com.aperturesoft.TestdiesConfigurer">
     <property name="mdownFiles">
         <list>
             <value>classpath:/select_post_test.md</value>
         </list>
     </property>
-    <property name="dateFormat" ref="dateFormat"/>
+    <property name="dateFormatString" value="yyyy-MM-dd"/>
     <property name="dataSource" ref="dataSource"/>
 </bean>
 ````
 
-use `@RunWith(TestdiesSpringTestRunner.class)` and `@WithFixture("SELECT POST TEST")` annotation on junit test class.
-before test method invoke, specificated markdown tables' row will inserted each database table. 
-and delete data after method invoked.
+`@RunWith(TestdiesSpringTestRunner.class)` 와 `@WithFixture("SELECT POST TEST")` 어노테이션을 사용.
+* 프레임워크가 하는 일은 단순함.
+    * 테스트 메서드가 실행전 마크다운 테이블을 보고 테스트 데이터베이스에 해당 테이블을 지우고 인서트.
 
 ````java
 @RunWith(TestdiesSpringTestRunner.class)
@@ -102,7 +97,7 @@ public class TestPostMapperTest {
 NOTE
 ----
 
-* when first test, H2 database set schema option not working.. 
-    * first run without set option
-    * and run with set option.. then error go away. 
+* 처음 빈 H2 database 파일을 생성하면 스키마가 없어서 접속 URL이 안먹음..
+    * 처음엔 스키마를 빼고 돌린후
+    * 다시 스키마를 넣고 테스트를...
 

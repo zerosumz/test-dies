@@ -1,7 +1,6 @@
 package com.aperturesoft;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +11,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.format.DateTimeFormatter;
 import org.parboiled.common.FileUtils;
 import org.pegdown.Extensions;
 import org.pegdown.PegDownProcessor;
@@ -42,7 +42,7 @@ public class TestdiesMain {
 	public static PegDownProcessor pegDownProcessor = new PegDownProcessor(Extensions.ALL);
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestdiesMain.class);
 
-	public static Map<String, List<SqlRunner>> createFixture(DataSource dataSource, Resource[] resources, DateFormat dateFormat)
+	public static Map<String, List<SqlRunner>> createFixture(DataSource dataSource, Resource[] resources, DateTimeFormatter dateFormatter)
 			throws IOException, ClassNotFoundException {
 		Map<String, List<SqlRunner>> sqlRunnerMap = new HashMap<String, List<SqlRunner>>();
 		
@@ -91,7 +91,7 @@ public class TestdiesMain {
 					rows.add(columns);
 					
 				}
-				sqlRunners.add(new SqlRunner(dataSource, tableName, headerRow, rows, dateFormat));
+				sqlRunners.add(new SqlRunner(dataSource, tableName, headerRow, rows, dateFormatter));
 			}
 			
 			sqlRunnerMap.put(title, sqlRunners);

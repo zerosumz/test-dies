@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +13,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
@@ -21,23 +21,24 @@ import org.springframework.beans.factory.BeanCreationException;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
+import org.springframework.format.datetime.joda.DateTimeParser;
 
 public class SqlRunner {
 	private DataSource dataSource;
 	private String tableName;
 	private String sql;
 	private List<List<Cell>> bodyRows = new ArrayList<List<Cell>>();
-	private DateFormat dateFormat;
+	private DateTimeFormatter dateFormatter;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SqlRunner.class);
 
 	public SqlRunner(DataSource dataSource, String tableName, List<Cell> headerRow, List<List<Cell>> bodyRows,
-			DateFormat dateFormat) {
+			DateTimeFormatter dateFormatter) {
 		super();
 		this.dataSource = dataSource;
 		this.tableName = tableName;
 		this.bodyRows = bodyRows;
-		this.dateFormat = dateFormat;
+		this.dateFormatter = dateFormatter;
 
 		String[] questions = new String[headerRow.size()];
 		Arrays.fill(questions, "?");
@@ -76,7 +77,7 @@ public class SqlRunner {
 					else if (clazz.equals(Float.class))
 						preparedStatement.setFloat(paramIndex, Float.parseFloat(value));
 					else if (clazz.equals(Date.class))
-						preparedStatement.setDate(paramIndex, new java.sql.Date(dateFormat.parse(value).getTime()));
+						preparedStatement.setDate(paramIndex, new java.sql.Date(dateFormatter.parseDateTime(value).toDate().getTime()));
 					else if (clazz.equals(Boolean.class))
 						preparedStatement.setBoolean(paramIndex, Boolean.parseBoolean(value));
 					else if (Number.class.isAssignableFrom(clazz))

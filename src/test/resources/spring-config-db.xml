@@ -26,17 +26,13 @@
         <jdbc:script location="classpath:/H2_CREATE.sql" />
     </jdbc:initialize-database>
 	
-	<bean id="dateFormat" class="java.text.SimpleDateFormat">
-		<constructor-arg value="yyyy-MM-dd" />
-	</bean>
-	
 	<bean id="testDies" class="com.aperturesoft.TestdiesConfigurer">
 	    <property name="mdownFiles">
 	        <list>
 	            <value>classpath:/select_post_test.md</value>
 	        </list>
 	    </property>
-	    <property name="dateFormat" ref="dateFormat"/>
+	    <property name="dateFormatString" value="yyyy-MM-dd"/>
 	    <property name="dataSource" ref="dataSource"/>
 	</bean>
 
