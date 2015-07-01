@@ -91,7 +91,8 @@ public class SqlRunner {
 			LOGGER.debug(sql);
 			
 			preparedStatement.executeBatch();
-			connection.commit();
+			if(!connection.getAutoCommit())
+				connection.commit();
 		} catch (SQLException e) {
 			try {
 				e.printStackTrace();
